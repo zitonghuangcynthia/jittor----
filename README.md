@@ -26,7 +26,7 @@ python -m pip install faiss-gpu
 ```
 
 #### 预训练模型
-预训练模型模型下载地址为 https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth，下载后放入目录 `<root>/pass-jittor/weights/pass50/` 下。与此同时修改segment-anything文件中run.sh中的checkpoint为预训练模型的位置。
+预训练模型模型下载地址为 https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth ，下载后放入目录 `<root>/pass-jittor/weights/pass50/` 下。与此同时修改segment-anything文件中run.sh中的checkpoint为预训练模型的位置。
 
 ## 数据预处理
 
