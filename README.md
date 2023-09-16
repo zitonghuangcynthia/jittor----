@@ -1,89 +1,58 @@
-# PASS method for LUSS task （Jittor version）
-	
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/large-scale-unsupervised-semantic/unsupervised-semantic-segmentation-on-4)](https://paperswithcode.com/sota/unsupervised-semantic-segmentation-on-4?p=large-scale-unsupervised-semantic)
+# jittor大规模无监督语义分割
 
-	
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/large-scale-unsupervised-semantic/unsupervised-semantic-segmentation-on-5)](https://paperswithcode.com/sota/unsupervised-semantic-segmentation-on-5?p=large-scale-unsupervised-semantic)
+## 简介
 
-	
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/large-scale-unsupervised-semantic/unsupervised-semantic-segmentation-on-6)](https://paperswithcode.com/sota/unsupervised-semantic-segmentation-on-6?p=large-scale-unsupervised-semantic)
+本项目包含了三届计图挑战赛计图 - 赛道二大规模无监督语义分割赛题的代码实现。本项目的特点是：采用了 PASS模型的 方法对 ImageNet-S50 数据集进行语义分割 处理，取得了 mIoU (Mean Intersection over Union)达到31.0511 的效果。
 
+## 安装 
 
+本项目可在 1 张 Titan RTX 上运行，训练时间约为 50 小时。
 
-## Introduction
-![image](https://user-images.githubusercontent.com/20515144/196449430-5ac6a88c-24ea-4a82-8a45-cd244aeb0b3b.png)
+#### 运行环境
+- ubuntu 20.04 LTS
+- python >= 3.7
+- jittor >= 1.3.0
 
-We propose a new method for LUSS, namely PASS, containing four steps. 1) A randomly initialized model is trained with self-supervision of pretext tasks (i.e. our proposed Non-contrastive pixel-to-pixel representation alignment and Deep-to-shallow supervision) to learn shape and category representations. After representation learning, we obtain the features set for all training images. 2) We then apply a pixel-attention-based clustering scheme to obtain pseudo categories and assign generated categories to each image pixel. 3) We fine-tune the pre-trained model with the generated pseudo labels to improve the segmentation quality. 4) During inference, the LUSS model assigns generated labels to each pixel of images, same to the supervised model. 
-
-More details about the LUSS task and [ImageNet-S dataset](https://github.com/LUSSeg/ImageNet-S) are in [project page](https://LUSSeg.github.io/) and [paper link](https://arxiv.org/abs/2106.03149).
-
-
-
-## Usage
-We give the training and inference details in **[USAGE](USAGE.md)**.
-## Results
-**Fully Unsupervised Evaluation Protocol**
-<table><tbody>
-<!-- START TABLE -->
-<!-- TABLE HEADER -->
-<th valign="bottom">Dataset</th>
-<th valign="bottom">Arch</th>
-<th valign="bottom">Val</th>
-<th valign="bottom">Test</th>
-<th valign="bottom">Args</th>
-<th valign="bottom">Pretrained</th>
-<th valign="bottom">Pixelatt</th>
-<th valign="bottom">Centroid</th>
-<th valign="bottom">Finetuned</th>
-<!-- TABLE BODY -->
-<tr>
-<td align="left">ImageNet-S</td>
-<td align="center">ResNet50</td>
-<td align="center">11.4</td>
-<td align="center">10.3</td>
-<td align="center"><a href="scripts/luss919_pass_jt.sh">bash</a></td>
-<td align="center"><a href="">model</a></td>
-<td align="center"><a href="">model</a></td>
-<td align="center"><a href="">centroid</a></td>
-<td align="center"><a href="">model</a></td>
-</tr>
-<td align="left">ImageNet-S 300</td>
-<td align="center">ResNet50</td>
-<td align="center">17.8</td>
-<td align="center">17.4</td>
-<td align="center"><a href="scripts/luss300_pass_jt.sh">bash</a></td>
-<td align="center"><a href="">model</a></td>
-<td align="center"><a href="">model</a></td>
-<td align="center"><a href="">centroid</a></td>
-<td align="center"><a href="">model</a></td>
-</tr>
-</tr>
-<td align="left">ImageNet-S 50</td>
-<td align="center">ResNet50</td>
-<td align="center">29.2</td>
-<td align="center">29.8</td>
-<td align="center"><a href="scripts/luss50_pass_jt.sh">bash</a></td>
-<td align="center"><a href="">model</a></td>
-<td align="center"><a href="">model</a></td>
-<td align="center"><a href="">centroid</a></td>
-<td align="center"><a href="">model</a></td>
-</tr>
-</tbody></table>
-
-## Citation
+#### 安装依赖
+执行以下命令安装 python 依赖
 ```
-@article{gao2022luss,
-  title={Large-scale Unsupervised Semantic Segmentation},
-  author={Gao, Shanghua and Li, Zhong-Yu and Yang, Ming-Hsuan and Cheng, Ming-Ming and Han, Junwei and Torr, Philip},
-  journal=TPAMI,
-  year={2022}
-}
+python -m pip install scikit-learn
+python -m pip install pandas
+python -m pip install munkres
+python -m pip install tqdm
+python -m pip install pillow
+python -m pip install opencv-python
+python -m pip install faiss-gpu
 ```
 
-## Acknowledgement
+#### 预训练模型
+预训练模型模型下载地址为 https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth，下载后放入目录 `<root>/pass-jittor/weights/pass50/` 下。与此同时修改segment-anything文件中run.sh中的checkpoint为预训练模型的位置。
 
-This codebase is build based on the [SwAV codebase](https://github.com/facebookresearch/swav).
+## 数据预处理
 
-If you have any other question, open an issue or email us via shgao@live.com
+将数据下载解压到 `<root>/pass-jittor/data/ImageNetS/ImageNetS50/` 下。
+
+## 训练
+
+单卡训练可运行以下命令：
+```
+bash ./test.sh
+```
+
+## 推理，测试，评估
+
+将上述基本步骤按照指引操作完成后，您可以运行 bash ./test.sh 指令对数据集进行训练，推理，验证。
+
+如果想要运用随机初始化的resnet model进行训练，请将main_pretrain.py文件中的import resnet部分更改为import src.resnet_original as resnet_model。 
+如果想要用sam backbone进行训练，则请将main_pretrain.py文件中的import resnet部分更改为import src.resnet as resnet_model。 
+
+如果想要对数据集进行推理，则运行inference.py文件达到效果。
+
+如果想要对数据的推理结果进行评估，则运行evaluator.py得到评估结果
+
+
+## 致谢
+
+此项目基于论文 *Large-scale Unsupervised Semantic Segmentation* 实现，部分代码参考了 [PGSmall](https://github.com/PGSmall/segment-anything-jittor)。
 
 
